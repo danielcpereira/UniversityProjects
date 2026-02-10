@@ -1,0 +1,537 @@
+{
+	"info": {
+		"_postman_id": "8e42cbad-baae-4bb4-93de-dbd162f4c775",
+		"name": "Projeto BD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34370083"
+	},
+	"item": [
+		{
+			"name": "Autenticação",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"try {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    console.log(jsonData);  \r",
+							"\r",
+							"    if (jsonData.access_token) {\r",
+							"        pm.environment.set(\"jwt_token\", jsonData.access_token);\r",
+							"        console.log(\"Token JWT armazenado com sucesso.\");\r",
+							"    } else {\r",
+							"        console.log(\"Token JWT não encontrado na resposta.\");\r",
+							"    }\r",
+							"} catch (e) {\r",
+							"    console.log(\"Erro ao converter resposta para JSON: \" + e);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numero_cc\": \"111212222\",\r\n    \"password\": \"assistente\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http:///127.0.0.1:8080/dbproj/user",
+					"protocol": "http",
+					"path": [
+						"127.0.0.1:8080",
+						"dbproj",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar paciente",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numero_cc\": \"787878788\",\r\n    \"password\": \"123\",\r\n    \"nome\": \"Fernando Mendes\",\r\n    \"data_nascimento\": \"2001-12-13\",\r\n    \"mail\": \"fa@dei.pt\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/dbproj/register/patient",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"register",
+						"patient"
+					],
+					"query": [
+						{
+							"key": "funcionario_pessoa_numero_cc",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar médico",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numero_cc\": \"17676212\",\r\n    \"password\": \"danielvski456\",\r\n    \"nome\": \"Daniel Pereira\",\r\n    \"data_nascimento\": \"2003-07-18 \",\r\n    \"mail\": \"danie2l@dei.pt\",\r\n    \"licenca_medica\": \"54444\",\r\n    \"contrato_valido\": true,\r\n    \"id_especialidade\": 1,\r\n    \"inicio_contrato_atual\": \"2023-05-17\",\r\n    \"salario\": 4750\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/dbproj/register/doctor",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"register",
+						"doctor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar enfermeiro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numero_cc\": \"142141414\",\r\n    \"password\":\"\",\r\n    \"nome\": \"Paulo Fernandes\",\r\n    \"data_nascimento\": \"1991-10-15\",\r\n    \"mail\": \"paulo2f@dei.com\",\r\n    \"cat_herarquica\": \"enfermeiro-assistente\",\r\n    \"contrato_valido\": true,\r\n    \"inicio_contrato_atual\": \"2020-11-21\",\r\n    \"salario\": 3500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/dbproj/register/nurse",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"register",
+						"nurse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar assistente",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numero_cc\": \"111212222\",\r\n    \"password\":\"assistente\",\r\n    \"nome\": \"Fatima Palito\",\r\n    \"data_nascimento\": \"2004-12-15\",\r\n    \"mail\": \"fatim2a@dei.pt\",\r\n    \"contrato_valido\": true,\r\n    \"inicio_contrato_atual\": \"2024-05-17\",\r\n    \"salario\": 3000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/dbproj/register/assistant",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"register",
+						"assistant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar consulta",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data_consulta\": \"2023-02-27 02:30:00\",\r\n    \"preco\": 80,\r\n    \"id_especialidade\": 1,\r\n    \"medico_id\": 5,\r\n    \"paciente_cc\": \"78787878\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http:///127.0.0.1:8080/dbproj/appointment",
+					"protocol": "http",
+					"path": [
+						"127.0.0.1:8080",
+						"dbproj",
+						"appointment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fazer um pagamento",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"montante\": 70,\r\n    \"metodo\": \"Dinheiro\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http:///127.0.0.1:8080/dbproj/bills/20",
+					"protocol": "http",
+					"path": [
+						"127.0.0.1:8080",
+						"dbproj",
+						"bills",
+						"20"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar receita",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"evento_id\": 9,\r\n    \"validade\": \"2024-10-10\",\r\n    \"medicamentos\": [\r\n        {\r\n            \"nome\": \"foguetão\",\r\n            \"dosagem\": 10,\r\n            \"frequencia\": 2,\r\n            \"efeitos\": [\r\n                {\r\n                    \"nome\": \"estrela\",\r\n                    \"gravidade\": 8,\r\n                    \"probabilidade\": 80\r\n                },\r\n                {\r\n                    \"nome\": \"terra\",\r\n                    \"gravidade\": 5,\r\n                    \"probabilidade\": 25\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/dbproj/prescription",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"prescription"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar cirurgia",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"paciente_cc\": 66666666,\r\n    \"medico_id\": 10,\r\n    \"enfermeiros\": [\r\n        {\r\n            \"id\": 2\r\n        },\r\n        {\r\n            \"id\": 4\r\n        }\r\n    ],\r\n    \"tipo\": \"iris\",\r\n    \"data\": \"2023-03-27 04:30:00\",\r\n    \"preco\": 150,\r\n    \"id_especialidade\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http:///127.0.0.1:8080/dbproj/surgery",
+					"protocol": "http",
+					"path": [
+						"127.0.0.1:8080",
+						"dbproj",
+						"surgery"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obter consultas de um doente",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http:///127.0.0.1:8080/dbproj/appointments/77777777",
+					"protocol": "http",
+					"path": [
+						"127.0.0.1:8080",
+						"dbproj",
+						"appointments",
+						"77777777"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obter prescrições",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/dbproj/prescriptions/77777777",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"prescriptions",
+						"77777777"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top 3",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/dbproj/top3",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"dbproj",
+						"top3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Resumo diário",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http:///127.0.0.1:8080/dbproj/daily_summary/2024-05-27",
+					"protocol": "http",
+					"path": [
+						"127.0.0.1:8080",
+						"dbproj",
+						"daily_summary",
+						"2024-05-27"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Resumo anual",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http:///127.0.0.1:8080/dbproj/report",
+					"protocol": "http",
+					"path": [
+						"127.0.0.1:8080",
+						"dbproj",
+						"report"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
