@@ -1,0 +1,19 @@
+Port 22
+ListenAddress 0.0.0.0
+LogLevel VERBOSE
+
+# Authentication
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+TrustedUserCAKeys /etc/ssh/ca/ssh_user_ca.pub
+AuthorizedPrincipalsFile /run/auth_principals/%u
+
+# Session limits
+MaxSessions 5
+MaxStartups 5
+LoginGraceTime 30
+MaxAuthTries 10
+
+# Restrict users
+AllowUsers sshuser

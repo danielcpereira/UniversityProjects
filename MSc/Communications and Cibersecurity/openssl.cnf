@@ -1,0 +1,110 @@
+######################################################################
+# OpenSSL PKI configuration (Root CA + Server Certs + OCSP)
+# Corrected for ECDSA, SAN, AIA, CDP, OCSP
+######################################################################
+
+[ ca ]
+default_ca = CA_default
+
+######################################################################
+# CA DEFAULTS
+######################################################################
+[ CA_default ]
+dir               = /pki
+certs             = $dir/certs
+crl_dir           = $dir/crl
+new_certs_dir     = $dir/newcerts
+database          = $dir/index.txt
+serial            = $dir/serial
+
+private_key       = $dir/private/root.key
+certificate       = $dir/certs/root.crt
+
+default_md        = sha256
+default_days      = 825
+policy            = policy_loose
+unique_subject    = no
+
+crlnumber         = $dir/crlnumber
+default_crl_days  = 30
+
+######################################################################
+# POLICY
+######################################################################
+[ policy_loose ]
+commonName = supplied
+
+######################################################################
+# ROOT CA DN
+######################################################################
+[ req ]
+prompt = no
+default_md = sha256
+distinguished_name = dn
+x509_extensions = v3_ca
+
+[ dn ]
+CN = RootCA.cyber.local
+
+######################################################################
+# ROOT CA EXTENSIONS
+######################################################################
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always
+basicConstraints = critical, CA:true
+keyUsage = critical, keyCertSign, cRLSign
+
+######################################################################
+# SERVER CERTIFICATE EXTENSIONS
+######################################################################
+[ server_cert ]
+basicConstraints = CA:false
+nsCertType = server
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+# SAN - WILL BE FILLED FROM ALT_NAMES BLOCK
+subjectAltName = @alt_names
+
+# AIA - OCSP & CA ISSUER LINKS
+authorityInfoAccess = OCSP;URI:http://pki:2560, caIssuers;URI:http://pki/root.crt
+
+
+# CDP
+crlDistributionPoints = URI:http://pki/crl/crl.pem
+
+######################################################################
+# CLIENT CERTIFICATE EXTENSIONS (OPTIONAL)
+######################################################################
+[ client_cert ]
+basicConstraints = CA:false
+keyUsage = critical, digitalSignature
+extendedKeyUsage = clientAuth
+
+######################################################################
+# OCSP SIGNING CERTIFICATE
+######################################################################
+[ ocsp_ext ]
+basicConstraints = CA:false
+keyUsage = critical, digitalSignature
+extendedKeyUsage = OCSPSigning
+authorityKeyIdentifier = keyid,issuer
+
+######################################################################
+# REQUEST EXTENSIONS (DEFAULT)
+######################################################################
+[ v3_req ]
+basicConstraints = CA:false
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+
+######################################################################
+# ALT NAMES
+######################################################################
+[ alt_names ]
+DNS.1 = proxy.cyber.local
+DNS.2 = localhost
+DNS.3 = flask
+IP.1  = 127.0.0.1
