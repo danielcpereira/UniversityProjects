@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisar – Googol</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<header>
+    <a th:href="@{/}" class="mini-logo">Googol</a>
+    <nav class="topnav">
+        <a th:href="@{/links}">Links para URL</a>
+        <a th:href="@{/barrels}">Barrels Ativos</a>
+    </nav>
+</header>
+
+<main class="main-content">
+    <a th:href="@{/}" class="logo">Googol</a>
+
+    <form action="/search" method="get" class="search-form" style="margin-bottom:1rem;">
+        <input
+                type="text"
+                id="search-query"
+                name="q"
+                th:value="${query}"
+                class="search-input"
+                required />
+        <button type="submit" class="search-button" aria-label="Pesquisar">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+
+    <div class="hn-action-bar">
+        <button id="index-hn-top" class="hn-btn hn-btn-primary">
+            <i class="fas fa-fire"></i>
+            <span>Indexar Top Stories</span>
+        </button>
+        <div id="hn-feedback" class="hn-feedback"></div>
+    </div>
+
+    <div class="content-area">
+        <h2>Resultados para "<span th:text="${query}"></span>"</h2>
+
+        <!--Caixa de Análise-->
+        <div id="analysis-container" class="analysis-box">
+            <div id="analysis-spinner" style="display:none; font-style:italic;">
+                A Gerar análise…
+            </div>
+            <div id="analysis-text"></div>
+        </div>
+
+        <div th:if="${results != null}">
+            <div th:each="res : ${results}" class="search-result">
+                <h3 th:text="${res.title}">Título da página</h3>
+                <a th:href="${res.url}" th:text="${res.url}" target="_blank">Link clicável</a>
+                <p th:text="${res.description}">Descrição resumo da página</p>
+            </div>
+            <div th:if="${results.isEmpty()}">
+                <p>Nenhum resultado encontrado. Tente outras palavras-chave.</p>
+            </div>
+        </div>
+
+        <!--Paginação-->
+        <div class="pagination-container" th:if="${totalPages > 1}">
+            <a th:if="${currentPage > 1}"
+               th:href="@{/search(q=${query},page=${currentPage-1})}"
+               class="pagination-btn">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="page-numbers">
+                <a th:href="@{/search(q=${query},page=1)}"
+                   th:classappend="${currentPage==1} ? ' active-page' : ''"
+                   class="page-num">1</a>
+                <span th:if="${currentPage>3}" class="ellipsis">…</span>
+                <a th:if="${currentPage>2}"
+                   th:href="@{/search(q=${query},page=${currentPage-1})}"
+                   class="page-num"
+                   th:text="${currentPage-1}">2</a>
+                <a th:if="${currentPage>1}"
+                   th:href="@{/search(q=${query},page=${currentPage})}"
+                   class="page-num active-page"
+                   th:text="${currentPage}">3</a>
+                <a th:if="${currentPage<totalPages}"
+                   th:href="@{/search(q=${query},page=${currentPage+1})}"
+                   class="page-num"
+                   th:text="${currentPage+1}">4</a>
+                <span th:if="${currentPage<totalPages-2}" class="ellipsis">…</span>
+                <a th:if="${totalPages>currentPage+1}"
+                   th:href="@{/search(q=${query},page=${totalPages})}"
+                   class="page-num"
+                   th:text="${totalPages}">5</a>
+            </div>
+            <a th:if="${currentPage<totalPages}"
+               th:href="@{/search(q=${query},page=${currentPage+1})}"
+               class="pagination-btn">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const query = new URLSearchParams(location.search).get('q');
+        if (!query) return;
+
+        const spinner = document.getElementById('analysis-spinner');
+        const textEl = document.getElementById('analysis-text');
+
+        const storageKey = 'googol_analysis_' + query;
+        const savedAnalysis = localStorage.getItem(storageKey);
+
+        if (savedAnalysis) {
+            displayAnalysis(savedAnalysis);
+        } else {
+            spinner.style.display = 'block';
+            fetch('/search/analysis?q=' + encodeURIComponent(query), { method: 'POST' })
+                .then(res => res.text())
+                .then(analysis => {
+                    if (analysis) {
+                        localStorage.setItem(storageKey, analysis);
+                        displayAnalysis(analysis);
+                    }
+                    spinner.style.display = 'none';
+                })
+                .catch(err => {
+                    spinner.style.display = 'none';
+                    console.error('Erro na análise:', err);
+                });
+        }
+
+        function displayAnalysis(analysis) {
+            textEl.innerHTML = `
+                <div class="analysis-section">
+                    <h3 class="analysis-title"><i class="fas fa-lightbulb"></i> Análise Contextualizada</h3>
+                    <div class="analysis-content">
+                        <p>${analysis.replace(/\n/g,'<br/>')}</p>
+                    </div>
+                </div>`;
+        }
+
+        // Botão Top Stories do HackerNews
+        const btnTop = document.getElementById('index-hn-top');
+        const feedback = document.getElementById('hn-feedback');
+
+        if (btnTop) {
+            btnTop.addEventListener('click', () => {
+                const terms = document.getElementById('search-query').value.trim();
+                if (!terms) {
+                    showFeedback('Indica termos para filtrar as Top Stories.', 'error');
+                    return;
+                }
+
+                showFeedback('A indexar...', 'loading');
+
+                fetch('/hn/index-top?terms=' + encodeURIComponent(terms), { method: 'POST' })
+                    .then(res => res.text())
+                    .then(message => {
+                        showFeedback(message, 'success');
+                    })
+                    .catch(err => {
+                        showFeedback('Erro: ' + err, 'error');
+                    });
+            });
+        }
+
+        function showFeedback(message, type) {
+            feedback.textContent = message;
+            feedback.className = 'hn-feedback ' + type;
+
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    feedback.className = 'hn-feedback';
+                }, 5000);
+            }
+        }
+    });
+</script>
+
+<style>
+    :root {
+        --primary-color: #007bff;
+        --text-primary: #333;
+        --text-secondary: #666;
+        --hn-color: #ff6600;
+        --success-color: #28a745;
+        --error-color: #dc3545;
+    }
+
+    .hn-action-bar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 0;
+    }
+
+    .hn-btn {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        padding: .75rem 1.25rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: .95rem;
+        cursor: pointer;
+        transition: all .2s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        white-space: nowrap;
+    }
+
+    .hn-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .hn-btn-primary {
+        background: var(--hn-color);
+        color: #fff;
+    }
+
+    .hn-btn-primary:hover {
+        background: #e55d00;
+    }
+
+    .hn-feedback {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        min-height: 20px;
+    }
+
+    .hn-feedback.success {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success-color);
+        border-left: 3px solid var(--success-color);
+    }
+
+    .hn-feedback.error {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--error-color);
+        border-left: 3px solid var(--error-color);
+    }
+
+    .hn-feedback.loading {
+        background-color: rgba(0, 123, 255, 0.1);
+        color: var(--primary-color);
+        border-left: 3px solid var(--primary-color);
+    }
+
+    /* Análise */
+    .analysis-box {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f7f8f9;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .analysis-section {
+        margin-bottom: 0;
+        padding: 0;
+        background: transparent;
+    }
+    .analysis-title {
+        margin-bottom: .75rem;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: .5rem;
+    }
+    .analysis-content {
+        padding: .5rem 0;
+    }
+
+    /* Paginação */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: .5rem;
+        margin-top: 2rem;
+        flex-direction: row;
+    }
+    .page-numbers {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: .5rem;
+    }
+    .pagination-btn, .page-num {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+    .pagination-btn {
+        background: var(--primary-color);
+        color: #fff;
+    }
+    .pagination-btn:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .page-num {
+        background: #f0f0f0;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    .page-num:hover {
+        background: #e0e0e0;
+    }
+    .active-page {
+        background: var(--primary-color)!important;
+        color: #fff!important;
+    }
+    .ellipsis {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    /* Adaptação para telemoveis e dispositivos mais pequenos */
+    @media (max-width: 640px) {
+        .hn-action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .pagination-container,
+        .page-numbers {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+</style>
+</body>
+</html>

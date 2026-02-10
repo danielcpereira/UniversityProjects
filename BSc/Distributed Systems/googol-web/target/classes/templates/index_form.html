@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indexar – Googol</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <a th:href="@{/}" class="mini-logo">Googol</a>
+    <nav class="topnav">
+        <a th:href="@{/links}">Links para URL</a>
+        <a th:href="@{/barrels}">Barrels Ativos</a>
+    </nav>
+</header>
+<main class="main-content">
+    <a th:href="@{/}" class="logo">Googol</a>
+    <div class="content-area">
+        <h2>Indexar URL</h2>
+        <form action="/home" method="post">
+            <input
+                    type="url"
+                    name="url"
+                    placeholder="Digite o URL a indexar..."
+                    class="search-input"
+                    required
+                    pattern="https?://.+"
+                    title="Por favor, insira um URL iniciado por http:// ou https://"
+            />
+            <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
+                <button type="submit" class="card">Indexar</button>
+            </div>
+        </form>
+        <div th:if="${successMessage}"
+             class="success-message"
+             th:text="${successMessage}"></div>
+
+        <div th:if="${errorMessage}"
+             class="error-message"
+             th:text="${errorMessage}"></div>
+    </div>
+</main>
+</body>
+</html>

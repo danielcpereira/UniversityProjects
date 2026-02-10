@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links para URL – Googol</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<header>
+    <a th:href="@{/}" class="mini-logo">Googol</a>
+    <nav class="topnav">
+        <a th:href="@{/links}">Links para URL</a>
+        <a th:href="@{/barrels}">Barrels Ativos</a>
+    </nav>
+</header>
+<main class="main-content">
+    <a th:href="@{/}" class="logo">Googol</a>
+    <div class="content-area">
+        <h2>Links para URL</h2>
+        <form action="/links" method="get" class="search-form">
+            <input type="text" name="url" placeholder="Digite um URL..." class="search-input" required />
+            <button type="submit" class="search-button" aria-label="Procurar">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <div th:if="${links != null}">
+            <ul class="results-list">
+                <li th:each="link : ${links}" class="search-result">
+                    <a th:href="${link}" th:text="${link}" target="_blank" class="result-link"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+</body>
+</html>

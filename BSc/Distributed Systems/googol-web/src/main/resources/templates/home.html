@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Googol</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<header>
+    <a th:href="@{/}" class="mini-logo">Googol</a>
+    <nav class="topnav">
+        <a th:href="@{/links}">Links para URL</a>
+        <a th:href="@{/barrels}">Barrels Ativos</a>
+    </nav>
+</header>
+<main class="main-content">
+    <div class="logo">Googol</div>
+    <form action="/search" method="get" class="search-form">
+        <input type="text" name="q" placeholder="Pesquisar..." class="search-input" required />
+        <button type="submit" class="search-button" aria-label="Pesquisar">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+    <div class="cards">
+        <a th:href="@{/index-form}" class="home-card">
+            <div class="icon">
+                <i class="fas fa-link"></i>
+            </div>
+            <span class="card-title">Indexar Página</span>
+        </a>
+        <a th:href="@{/stats}" class="home-card">
+            <div class="icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <span class="card-title">Top Pesquisas</span>
+        </a>
+    </div>
+
+    <div class="hn-index-controls">
+        <h3 class="hn-section-title"><i class="fas fa-fire fire-icon"></i> Indexação HackerNews</h3>
+        <div class="hn-user-container">
+            <div class="hn-input-wrapper">
+                <i class="fas fa-user hn-input-icon"></i>
+                <input
+                        type="text"
+                        id="hn-username"
+                        placeholder="Nome de utilizador"
+                        class="hn-input" />
+            </div>
+            <button id="index-hn-user" class="hn-btn hn-btn-primary">
+                <span>Indexar Perfil</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        <div id="hn-feedback" class="hn-feedback"></div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnUser = document.getElementById('index-hn-user');
+        const userInput = document.getElementById('hn-username');
+        const feedback = document.getElementById('hn-feedback');
+
+        if (btnUser) {
+            btnUser.addEventListener('click', () => {
+                const username = userInput.value.trim();
+                if (!username) {
+                    showFeedback('Indica um nome de utilizador do HackerNews.', 'error');
+                    return;
+                }
+
+                showFeedback('A indexar perfil...', 'loading');
+
+                fetch('/hn/index-user?username=' + encodeURIComponent(username), { method: 'POST' })
+                    .then(res => res.text())
+                    .then(message => {
+                        showFeedback(message, 'success');
+                    })
+                    .catch(err => {
+                        showFeedback('Erro: ' + err, 'error');
+                    });
+            });
+        }
+
+        function showFeedback(message, type) {
+            feedback.textContent = message;
+            feedback.className = 'hn-feedback ' + type;
+
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    feedback.className = 'hn-feedback';
+                }, 5000);
+            }
+        }
+    });
+</script>
+
+<style>
+    :root {
+        --primary-color: #007bff;
+        --success-color: #28a745;
+        --error-color: #dc3545;
+    }
+
+    .hn-index-controls {
+        margin-top: 2.5rem;
+        padding: 1.5rem;
+        background: #f7f8f9;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        max-width: 600px;
+        width: 100%;
+    }
+    .hn-section-title {
+        margin: 0 0 1rem;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+    .fire-icon {
+        color: var(--primary-color);
+    }
+    .hn-user-container {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+    }
+    .hn-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+    }
+    .hn-input {
+        padding: .75rem .75rem .75rem 2.25rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: .95rem;
+        width: 100%;
+        transition: all .2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .hn-input:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66,153,225,0.15);
+    }
+    .hn-input-icon {
+        position: absolute;
+        left: .75rem;
+        color: #718096;
+    }
+    .hn-btn {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        padding: .75rem 1.25rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: .95rem;
+        cursor: pointer;
+        transition: all .2s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .hn-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .hn-btn-secondary {
+        background: #2d3748;
+        color: #fff;
+    }
+    .hn-btn-secondary:hover {
+        background: #1a202c;
+    }
+    .hn-btn-primary {
+        background: var(--primary-color);
+        color: #fff;
+    }
+    .hn-btn-primary:hover {
+        background: #0069d9;
+    }
+
+    /* Área de feedback */
+    .hn-feedback {
+        padding: 0.75rem 1rem;
+        margin-top: 0.75rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        min-height: 20px;
+    }
+
+    .hn-feedback.success {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success-color);
+        border-left: 3px solid var(--success-color);
+    }
+
+    .hn-feedback.error {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--error-color);
+        border-left: 3px solid var(--error-color);
+    }
+
+    .hn-feedback.loading {
+        background-color: rgba(0, 123, 255, 0.1);
+        color: var(--primary-color);
+        border-left: 3px solid var(--primary-color);
+    }
+
+    /* Adaptação para telemoveis e dispositivos mais pequenos */
+    @media (max-width: 640px) {
+        .hn-user-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .hn-input {
+            width: 100%;
+        }
+    }
+</style>
+</body>
+</html>

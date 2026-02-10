@@ -1,0 +1,6 @@
+andre;1234;administrador
+daniel;456;aluno
+joao;923;professor
+manel;123;professor
+mimo;123;aluno
+nuno;1234;aluno

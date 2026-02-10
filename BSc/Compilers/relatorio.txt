@@ -1,0 +1,116 @@
+RELATÓRIO FINAL DO PROJETO DE COMPILADORES
+LINGUAGEM DEIGO
+2024-2025
+
+
+1. GRAMÁTICA RE-ESCRITA 
+
+ Iniciamos a implementação deste compilador pelas expressões regulares, responsaveis por identificar os padrões lexicais da linguagem deiGO. Criamos também, logo no início, os estados "%X COMMENT STRING" para garantir uma análise lexical correta nesses casos. Além disso, desenvolvemos a flag semicolon para permitir ao programador omitir o terminador nas situações em que tal é possível. No ficheiro Lex estão declarados todos os tokens necessários para esta linguagem, que são passados para o YACC através da função PASS_TOKEN() que armazena o token em yyval.
+
+ No YACC, ferramenta que gera automaticamente analisadores sintáticos, começamos por definir a precedência e associatividade dos operadores na gramática:
+ 
+    ↑ Menor precedência
+
+    %left COMMA
+    %right ASSIGN 
+    %left OR
+    %left AND
+    %left EQ NE LT GT LE GE
+    %left PLUS MINUS
+    %left STAR DIV MOD
+    %right NOT
+
+    ↓ Maior precedência
+
+ Estas regras determinam como se devem resolver as ambiguidades nas operações, garantindo uma correta interpretação.
+
+
+ Em seguida, desenvolvemos e desambiguamos a gramática em notação EBNF com base na gramática inicial fornecida no enunciado do projeto, inicialmente sem a árvore de sintaxe.
+
+    → Declaração de variáveis: Para declarar variáveis, optamos por criar o não-terminal VarDeclaration que permite a declaração de variáveis tanto fora como dentro de parênteses (LPAR ... RPAR). Cada vez que uma variável é encontrada dentro de VarDeclaration, ela segue para VarSpec_2.
+    
+    → Declaração de funções: O nosso não-terminal FuncDeclaration permite criar funções com ou sem tipo de retorno e com ou sem parâmetros. Se tiver parâmetros entra em Parameters, que chama a ParamDecl para definir o nome e o tipo de parâmetro, podendo incluir vários parâmetros através de Parameters_2. Se tiver tipo de retorno, chama o Type que pode ser INT, FLOAT32, BOOL ou STRING1.
+
+    → VarsAndStatements: Criamos o VarsAndStatements que permite adicionar ao FuncBody: VarDeclaration e Statement. Para possibilitar a inclusão de múltiplos statements criamos o Statement_2.
+
+    → Expr: Aqui são definidas as operações lógicas, relacionais, aritmétricas e chamadas de funções.
+
+    Por fim, foi incluída a recuperação local de erros de sintaxe nos locais necessários.
+
+2. Algoritmos e estruturas de dados da AST e da tabela de símbolos
+
+2.1. AST
+
+ Depois da gramática estar implementada, desenvolvemos funções e estruturas relacionadas à Árvore AST.
+
+    Estruturas:
+
+        struct node {
+            char *category;
+            char *token;
+            list *children;
+            list *sibling;
+        };
+
+        A estrutura node define um nó que será utilizado para construir a árvore sintática abstrata. Ela contém a category que descreve o tipo do nó (por exemplo, Program, VarDecl e String). Depois também tem uma variável chamada token que, caso exista, serve para armazenar o valor associado ao nó (por exemplo, "Area of Circle is : ", calcCir e 3.1415). O sibling e o children são listas.
+
+        struct node_list {
+            node *node;
+            list *next;
+        };
+
+        A estrutura node_list define listas de nós usadas para armazenar os irmãos e os filhos.
+
+    Funções:
+
+        Além das estruturas desenvolvemos todas as funções necessárias para a implementação das árvores AST.
+
+            →new_node: Cria um novo nó.
+            →add_childs: Adiciona filhos ao nó pai.
+            →add_sibling: Adiciona um novo irmão .
+            →print_tree: Imprime a árvore sintática no formato hierárquico.
+            →free_tree: Liberta toda a memória alocada para a árvore.
+            →update_type: Coloca o tipo da VarDeclaration como primeiro filho.
+            →calculate_depth: Útil para saber quando é necessário adicionar Block.
+
+2.2. Tabelas de Símbolos
+
+ Para a análise semântica construímos as tabelas de símbolos.
+
+    Estruturas:
+
+        typedef struct symbol_entry {
+            char *name;        
+            char *type;        
+            char *category;    
+        } symbol_entry;
+
+        A estrutura symbol_entry é utilizada para representar entradas de símbolos. A variável name é usada para representar o nome da variável ou função. O type serve para armazenar o tipo de variável ou os parâmetros de uma função. Por ultimo a category pode ser usada para indicar se uma variável é parametro da função ou o tipo de retorno de uma função.
+        
+        typedef struct symbol_table {
+            symbol_entry **entries;   
+            int size;                 
+            int capacity;             
+        } symbol_table;
+
+        A estrutura symbol_table é usada para implementar uma tabela de símbolos. Entries é um ponteiro para um array de ponteiros do tipo symbol_entry.
+
+    Funções:
+        
+        →create_symbol_table: Cria uma nova tabela de símbolos.
+        →lowerCase: Passa para lowerCase a primeira letra de uma palavra.
+        →add_symbol: Adiciona a uma tabela um símbolo.
+        →print_symbol_table: Imprime uma determinada tabela.
+        →free_symbol_table: Liberta toda a memória alocada para uma tabela.
+        →register_symbols: Trata-se de uma função que percorre recursivamente todos os nós da árvore AST e verifica de que tipo de nó se trata. Existem confirmações para não existirem duas variáveis com o mesmo nome na mesma tabela e também para evitar duas tabelas com o mesmo nome.
+            →Se for VarDecl adiciona variáveis à tabela atualmente ativa.
+            →Se for FuncHeader verifica se a função tem retorno, cria tabelas para as novas Funções, adiciona as declarações à tabela global.
+        →print_all_tables: Esta função invoca a print_symbol_table para imprimir todas as tabelas.
+
+
+ TRABALHO REALIZADO POR:
+
+- Daniel Pereira Nº 2021237092
+- Manuel Couto   Nº 2021233121
+
+

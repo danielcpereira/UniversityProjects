@@ -1,0 +1,8 @@
+644:0:0:/home/.gns3_perms
+664:1000:1001:/home/testeprojeto.h
+664:1000:1001:/home/utilizadores.txt
+664:1000:1001:/home/.h
+755:0:0:/home/servidor
+664:1000:1001:/home/serverprojeto.c
+664:1000:1001:/home/funcoesprojeto.c
+777:0:0:/home

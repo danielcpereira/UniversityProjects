@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barrels Ativos – Googol</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <a th:href="@{/}" class="mini-logo">Googol</a>
+    <nav class="topnav">
+        <a th:href="@{/links}">Links para URL</a>
+        <a th:href="@{/barrels}">Barrels Ativos</a>
+    </nav>
+</header>
+
+<main class="main-content">
+    <a th:href="@{/}" class="logo">Googol</a>
+    <div class="content-area">
+        <h2>Barrels Ativos</h2>
+
+        <div id="barrels-list" style="margin: 1.5rem 0;">
+            <!--Estado inicial: 0 barrels-->
+            <div th:if="${barrels == null or #lists.isEmpty(barrels)}"
+                 style="text-align: center; padding: 2rem 0;">
+                <p>Não há barrels ativos no momento</p>
+            </div>
+
+            <div th:if="${barrels != null and !#lists.isEmpty(barrels)}">
+                <div th:each="barrel : ${barrels}"
+                     class="barrel-item"
+                     style="background-color: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <h3 th:text="${barrel.name}"
+                        style="margin-bottom: 0.5rem; color: var(--primary-color);"></h3>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary);">Status:</span>
+                        <span th:text="${barrel.active ? 'Free' : 'Busy'}"
+                              style="padding: 0.2rem 0.8rem; border-radius: 12px; font-size: 0.8rem;"></span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary);">URLs Indexadas:</span>
+                        <span th:text="${barrel.indexSize}" style="font-weight: 500;"></span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary);">Tempo de Resposta:</span>
+                        <span th:text="${T(java.lang.String).format('%.3f', barrel.responseTime)}"
+                              style="font-weight: 500;"></span> s
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function(frame) {
+        console.log('Connected to barrels WS: ' + frame);
+        stompClient.subscribe('/topic/barrels', function(message) {
+            updateBarrels(JSON.parse(message.body));
+        });
+    });
+
+    function updateBarrels(data) {
+        const container = document.getElementById('barrels-list');
+        container.innerHTML = '';
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 2rem 0;">
+                    <p>Não há barrels ativos no momento</p>
+                </div>`;
+            return;
+        }
+
+        data.forEach(b => {
+            const div = document.createElement('div');
+            div.className = 'barrel-item';
+            div.style.cssText = 'background-color:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;';
+            div.innerHTML = `
+                <h3 style="margin-bottom:0.5rem;color:var(--primary-color);">${b.name}</h3>
+                <div>Status: <strong>${b.active ? 'Free' : 'Busy'}</strong></div>
+                <div>URLs Indexadas: ${b.indexSize}</div>
+                <div>Tempo de Resposta: ${b.responseTime.toFixed(3)} s</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+</script>
+</body>
+</html>
