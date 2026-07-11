@@ -1,0 +1,8 @@
+================================================================
+06 — ImmutableConfig.java
+================================================================
+[1] Construtor privado força o uso exclusivo do Builder para criar instâncias
+[2] `withPort()` cria uma nova instância em vez de mutar — garante imutabilidade real
+[3] O copy constructor do Builder copia todos os campos do objeto existente para derivar configurações
+[4] `Objects.requireNonNull` valida campos obrigatórios no momento da construção
+[5] Fluent interface no Builder — cada setter retorna `this` para encadeamento de chamadas

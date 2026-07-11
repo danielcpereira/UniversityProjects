@@ -1,0 +1,8 @@
+================================================================
+02 — ManualSemaphore.java
+================================================================
+[1] `synchronized` garante exclusão mútua no acesso à variável `permits`
+[2] Uso de `while` em vez de `if` no `wait()` — proteção contra spurious wakeups
+[3] `acquire()` bloqueia a thread quando `permits == 0`
+[4] `release()` incrementa permits e acorda uma thread com `notify()`
+[5] Diferença conceptual para `java.util.concurrent.Semaphore` da biblioteca standard

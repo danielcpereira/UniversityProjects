@@ -1,0 +1,8 @@
+================================================================
+03 — WriteAheadLog.java
+================================================================
+[1] As operações são primeiro registadas no log antes de serem aplicadas ao store
+[2] `commit()` aplica todas as entradas do log ao store e limpa o log
+[3] `rollback()` descarta o log sem alterar o store — o estado fica inalterado
+[4] Flag `committed` impede writes após um commit já ter sido feito
+[5] `split("=", 2)` limita o split a 2 partes para suportar valores que contenham "="

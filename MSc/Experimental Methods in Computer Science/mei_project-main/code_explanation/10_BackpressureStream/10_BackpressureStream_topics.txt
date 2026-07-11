@@ -1,0 +1,8 @@
+================================================================
+10 — BackpressureStream.java
+================================================================
+[1] `LinkedBlockingQueue` com capacidade limitada implementa o mecanismo de backpressure
+[2] `buffer.put()` bloqueia o producer quando o buffer está cheio — isto é o backpressure
+[3] `buffer.poll()` com timeout evita busy-waiting quando o buffer está vazio
+[4] O producer é naturalmente abrandado pelo consumer através do bloqueio do buffer
+[5] Diferença para unbounded queue: sem limite, o producer nunca bloqueia e pode causar OutOfMemoryError

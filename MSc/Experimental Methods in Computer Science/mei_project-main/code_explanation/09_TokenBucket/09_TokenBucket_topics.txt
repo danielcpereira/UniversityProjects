@@ -1,0 +1,8 @@
+================================================================
+09 — TokenBucket.java
+================================================================
+[1] Refill é lazy — tokens só são adicionados quando `consume()` é chamado, não continuamente
+[2] `System.nanoTime()` usado em vez de `currentTimeMillis()` para maior precisão temporal
+[3] `Math.min(capacity, ...)` garante que os tokens nunca excedem a capacidade do bucket
+[4] `synchronized` em `consume()` previne race conditions em ambiente multi-thread
+[5] Diferença para sliding window rate limiter: token bucket permite bursts até à capacidade

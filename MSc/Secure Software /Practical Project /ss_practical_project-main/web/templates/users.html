@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <a href="{{ url_for('documents_page') }}" class="back-link">&#8592; Voltar à página principal</a>
+
+  <h2>Registered users</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.role }}</td>
+        <td>{% if user.is_disabled %}disabled{% else %}active{% endif %}</td>
+        <td>
+          {% if user.id != current_user_id %}
+            {% if not user.is_disabled %}
+            <form method="post" action="{{ url_for('admin_disable_user', user_id=user.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit">Disable</button>
+            </form>
+            {% else %}
+            <form method="post" action="{{ url_for('admin_enable_user', user_id=user.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit">Enable</button>
+            </form>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

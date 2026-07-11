@@ -1,0 +1,45 @@
+services:
+  web:
+    build: ./web
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - FILE_ENCRYPTION_KEY=${FILE_ENCRYPTION_KEY}
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-true}
+    depends_on:
+      - db
+
+  db:
+    build: ./db
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  db-backup:
+    build: ./db/backup
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-7}
+    volumes:
+      - pgbackups:/backups
+      - ./db/backup/data:/backups/data 
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  pgbackups:

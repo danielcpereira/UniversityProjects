@@ -1,0 +1,45 @@
+Graficos?
+
+analise exploratoria de dados, o que o dataset nos mostra, orientação
+
+------
+
+Nao quer muitos testes de hipoteses
+
+-------
+
+Hipotese - resposta á pergunta:
+ - Rejeitar com x de confiança
+ - Não rejeitar " " " " " 
+
+Duas ou tres sequencias destas
+
+-------
+
+Hipoteses gerais
+Depois mais especifica
+
+---------------
+___Relatorio___
+
+Nao quer palha pah, nao quer contas nem tabelas, usar tudo o que temos à mão.
+
+-------
+
+ENTREGAR RELATORIO CURTO, DIRETO, EXPLICATIVO POR SI SO
+
+-------
+
+ultima secção a explicar o que o grupo fez individualmente, llms utilizados, texto escrito por llms, ...
+
+entregar relatorio , e zip (package de reprodutividade) com tudo para o professor observar
+
+README, prompts codigos, resultados das llms, etc tudo, scripts,
+
+-------
+
+
+
+
+
+aumentar numero de amostras, e sermos mais rigidos, penalizar mais 

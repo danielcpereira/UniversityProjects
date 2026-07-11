@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+  <a href="{{ url_for('documents_page') }}" class="back-link">&#8592; Voltar aos documentos</a>
+
+  <h2>Document details</h2>
+
+  <p><strong>ID:</strong> {{ document.id }}</p>
+  <p><strong>Owner:</strong> {{ document.owner }}</p>
+  <p><strong>Title:</strong> {{ document.title }}</p>
+  <p><strong>Filename:</strong> {{ document.filename }}</p>
+
+  <h3>Download</h3>
+  <a href="{{ url_for('download_document', document_id=document.id) }}">
+    <button type="button">Download</button>
+  </a>
+
+  <h3>Share document</h3>
+  <form method="post" action="{{ url_for('share_document', document_id=document.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>User ID to share with</label>
+    <input type="number" name="shared_with" required>
+    <button type="submit">Share</button>
+  </form>
+
+  {# V-27 — visibilidade de partilhas: o dono pode ver quem tem acesso ao seu documento #}
+  <h3>Partilhado com</h3>
+  {% if shared_with %}
+    <ul>
+      {% for user in shared_with %}
+        <li>
+          {{ user.username }} (ID: {{ user.id }})
+          <form method="post" action="{{ url_for('revoke_share', document_id=document.id) }}" style="display:inline;width:auto;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="shared_with_id" value="{{ user.id }}">
+            <button type="submit" style="background:none;border:none;cursor:pointer;font-size:1em;padding:0;width:auto;display:inline;">🗑️</button>
+        </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Este documento ainda não foi partilhado com ninguém.</p>
+  {% endif %}
+</div>
+{% endblock %}

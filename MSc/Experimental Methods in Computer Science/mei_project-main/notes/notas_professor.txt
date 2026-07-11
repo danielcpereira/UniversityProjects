@@ -1,0 +1,35 @@
+Bug fiding -----------------------------------------------------
+- Injetar bugs artificiais
+- C é mais fácil meter para lá bugs
+- Java e C? 
+- gestão de memoria, ponteiros, etc
+- patched e não patched 
+- n mais elevado?
+- morita 
+
+Estrutura do relatorio -----------------------------------------
+- definir Estrutura
+- referencias
+- como grupo se organizou
+- o que usamos de llms para o relatorio?
+
+- minimo paleio possivel
+- ler o relatotio e ter uma ideia muito clara
+
+- nao precisa de tabelas e formulas
+
+- desenho experimental, maneira como implemetamos a experiencia, 
+variaveis
+- analise dos dados, pequenos graficos, definir perguntas
+- testes de hipoteses
+
+- opah calculos só no exame
+- alguns calculos talvez
+
+- separar as experiencias
+- algumas secções gerais
+- duas familias de experiencias
+
+
+
+

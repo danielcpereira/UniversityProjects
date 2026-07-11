@@ -1,0 +1,8 @@
+================================================================
+05 — CircuitBreaker.java
+================================================================
+[1] Três estados distintos: CLOSED (normal), OPEN (bloqueado), HALF_OPEN (a testar)
+[2] Transição OPEN → HALF_OPEN ocorre após o cooldown baseado em tempo absoluto
+[3] Em HALF_OPEN, uma chamada bem-sucedida fecha o circuito e faz reset dos failures
+[4] Reset de `failures` só acontece em HALF_OPEN, não em CLOSED após falhas parciais
+[5] `Supplier<String>` permite passar qualquer ação como argumento sem a executar imediatamente

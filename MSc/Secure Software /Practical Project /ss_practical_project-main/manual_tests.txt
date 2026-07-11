@@ -1,0 +1,404 @@
+> curl.exe -i http://127.0.0.1:8000/documents
+HTTP/1.1 302 FOUND
+Server: Werkzeug/3.1.8 Python/3.11.15
+Date: Sun, 17 May 2026 17:01:50 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 199
+Location: /login
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; form-action 'self'; frame-ancestors 'none'
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Cookie
+Set-Cookie: session=eyJfZmxhc2hlcyI6W3siIHQiOlsiZXJyb3IiLCJQbGVhc2UgbG9nIGluIGZpcnN0LiJdfV19.agn0fg._Je0ODOt80TXKRPtjna3gMsd4Eg; Secure; HttpOnly; Path=/; SameSite=Lax
+Connection: close
+
+<!doctype html>
+<html lang=en>
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to the target URL: <a href="/login">/login</a>. If not, click the link.
+
+---------------
+
+> curl.exe -i -b cookies_alice.txt -c cookies_alice.txt -X POST http://127.0.0.1:8000/login -d "username=alice&password=password&csrf_token=Ijk2NGJjMTkyNmU5YzE4NWI3ZGU0NzMxZmEyZTQ1NDc1YmRlMTAxNjgi.agn1ag.Y6rSFx_j3DF9_BweUcrNtdnFdwM"
+HTTP/1.1 302 FOUND
+Server: Werkzeug/3.1.8 Python/3.11.15
+Date: Sun, 17 May 2026 17:06:20 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 207
+Location: /documents
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; form-action 'self'; frame-ancestors 'none'
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Cookie
+Set-Cookie: session=.eJwlikEKwzAMBP-y1yZFFjQCvaN3I1IdDI5bHKVQSv7ehJ52htkv8sv7Ys1bQKNvPqDaGtnmKO8SHyiYeBrpNia5J1GalOnKwiLpQqREGNCf1Y_ntno_7JxcHlD-c7PlrFbL7Nh_A3Uitg.agn1jA.qlVtQx48Y1qHSWg649ro2x7Emj4; Expires=Sun, 17 May 2026 21:06:20 GMT; Secure; HttpOnly; Path=/; SameSite=Lax
+Connection: close
+
+<!doctype html>
+<html lang=en>
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to the target URL: <a href="/documents">/documents</a>. If not, click the link.
+
+---------------
+
+> curl.exe -i -b cookies_alice.txt http://127.0.0.1:5000/documents
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 2042 ms: Could not connect to server
+PS C:\Users\eduar\Documents\Mestrado\1.2\SS2026\Project\ss_practical_project> curl.exe -i -b cookies_alice.txt http://127.0.0.1:8000/documents  
+HTTP/1.1 200 OK                                                             
+Server: Werkzeug/3.1.8 Python/3.11.15
+Date: Sun, 17 May 2026 17:07:39 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1770
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; form-action 'self'; frame-ancestors 'none'
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Cookie
+Set-Cookie: session=.eJwli8EOwiAQRP9lr1qzXYoLfId3gnSbEFtqKDUxxn-XxtPM5M37gH9KWUKWXMHVsssZ4lYmX9eHZHDAZmIRsopGY3DSimQYmAa05t4z2ciag1EGzjCHrfoQa3ql-m4qIV071F3Pt54dslP2orXRyp4QHWJTyjpLe-6blLaO8GkER_-ew3LQMKco8P0BD9Ax2g.agn12w.yqtu-A9l6c-dMzAtRzJPXjLd2nA; Expires=Sun, 17 May 2026 21:07:39 GMT; Secure; HttpOnly; Path=/; SameSite=Lax
+Connection: close
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure Software Baseline</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: var(--color-primary, #4f6ef7);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Document Management Platform</h1>
+    
+      <div class="userbox">Logged in as <strong>alice</strong>
+        
+        · <a href="/logout">Logout</a>
+      </div>
+    
+  </header>
+
+  <main>
+  <ul class="flashes" id="flash-container">
+    
+      
+    
+  </ul>
+
+  
+<p id="title-preview" class="muted"></p>
+<section class="grid">
+  <div class="card">
+    <h2>Upload document</h2>
+    <form method="post" action="/documents/upload" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="Ijc4ZjdlZTI5MzJkODgwZjUzMmU0NDcyNDA5OGIxNzI5Yzc1N2E4Mzgi.agn12w.z4Y9q04U8_DYuK7IsVY2cURqL7Y">
+      <label>Title</label>
+      <input type="text" name="title" required>
+
+      <label>File</label>
+      <input type="file" name="document" required>
+
+      <button type="submit">Upload</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Documents</h2>
+    <p class="muted">Showing documents for user id: 2</p>
+    
+      <p>No documents found.</p>
+    
+
+    <h2 style="margin-top: 1.5rem;">Shared with me</h2>
+    <p class="muted">Showing documents shared with user id: 2</p>
+    
+      <p>No documents have been shared with you.</p>
+    
+  </div>
+</section>
+
+</main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
+
+---------------
+
+> curl.exe -i -b cookies_alice.txt http://127.0.0.1:8000/logout
+HTTP/1.1 302 FOUND
+Server: Werkzeug/3.1.8 Python/3.11.15
+Date: Sun, 17 May 2026 17:08:26 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 199
+Location: /login
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; form-action 'self'; frame-ancestors 'none'
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Cookie
+Set-Cookie: session=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Secure; HttpOnly; Path=/; SameSite=Lax
+Connection: close
+
+<!doctype html>
+<html lang=en>
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to the target URL: <a href="/login">/login</a>. If not, click the link.
+
+---------------
+
+> curl.exe -i -b cookies_alice.txt http://127.0.0.1:8000/documents/1
+HTTP/1.1 403 FORBIDDEN
+Server: Werkzeug/3.1.8 Python/3.11.15
+Date: Sun, 17 May 2026 17:11:01 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1004
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; form-action 'self'; frame-ancestors 'none'
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Cookie
+Set-Cookie: session=.eJwlikEKwzAMBP-y1yRFMqQGvaN3I1IdDI4bHKVQSv9eh5x2Z2e_SJu1VatVh3g7bETR3ZMunt_ZPxAECveJ5onjg6MwC_EtMvV5IBIijGivYv157NY6nZHyExKuXnU9rZa8GH5__x4iow.agn2pQ.8eQbXf9yysOj1b0DrD8pWnFB2tA; Expires=Sun, 17 May 2026 21:11:01 GMT; Secure; HttpOnly; Path=/; SameSite=Lax
+Connection: close
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure Software Baseline</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: var(--color-primary, #4f6ef7);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Document Management Platform</h1>
+    
+      <div class="userbox">Logged in as <strong>alice</strong>
+        
+        · <a href="/logout">Logout</a>
+      </div>
+    
+  </header>
+
+  <main>
+  <ul class="flashes" id="flash-container">
+    
+      
+    
+  </ul>
+
+  
+<section class="card narrow">
+  <h2>Erro 403</h2>
+  <p>Access denied.</p>
+  <a href="/" class="back-link">&#8592; Voltar ao início</a>
+</section>
+
+</main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
+
+---------------
+
+> curl.exe -i -b cookies_alice.txt http://127.0.0.1:8000/admin/users
+HTTP/1.1 403 FORBIDDEN
+Server: Werkzeug/3.1.8 Python/3.11.15
+Date: Sun, 17 May 2026 17:14:46 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1004
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; form-action 'self'; frame-ancestors 'none'
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Cookie
+Set-Cookie: session=.eJwlikEKgzAQRe_yt2qZpKnSOYf7MNhZBGIscRSk9O5Vuvrv8f4H8a11lqLFwFY3bZFltSiTpT3ZAYYn33f06NwwuoFd4NDf7iE8iRoiJkKLumQ9n9uq9bRrYnqB_Z-LzFeVnCbF9wcD2CK3.agn3hg.jsOJXThQA2tSWCELgTey0dK75Jk; Expires=Sun, 17 May 2026 21:14:46 GMT; Secure; HttpOnly; Path=/; SameSite=Lax
+Connection: close
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure Software Baseline</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: var(--color-primary, #4f6ef7);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Document Management Platform</h1>
+    
+      <div class="userbox">Logged in as <strong>alice</strong>
+        
+        · <a href="/logout">Logout</a>
+      </div>
+    
+  </header>
+
+  <main>
+  <ul class="flashes" id="flash-container">
+    
+      
+    
+  </ul>
+
+  
+<section class="card narrow">
+  <h2>Erro 403</h2>
+  <p>Access denied.</p>
+  <a href="/" class="back-link">&#8592; Voltar ao início</a>
+</section>
+
+</main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
+
+---------------
+
+> curl.exe -i -b cookies_alice.txt -X POST http://127.0.0.1:8000/documents/upload -F "title=FakePDF" -F "document=@fake.pdf" -F "csrf_token=TOKEN_ALICE"
+
+HTTP/1.1 400 BAD REQUEST
+Server: Werkzeug/3.1.8 Python/3.11.15
+Date: Sun, 17 May 2026 17:16:45 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1006
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Content-Security-Policy: default-src 'self'; form-action 'self'; frame-ancestors 'none'
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Cookie
+Set-Cookie: session=.eJwlikEKgzAQRe_yt9UyibHKnKP7MNhZBGJa4iiU0ruruPrv8f4P8aN1lqLFwFZXbZBlsSiTpS3ZFwxP_tFS37rh6QZ2HYf-7sbQhfFGxERoUN9Zj-e6aD3snJheYH9xkfmsktOk-O8FCSK9.agn3_Q.mGBRGV6uvb8aoPznBUhLx7lopQk; Expires=Sun, 17 May 2026 21:16:45 GMT; Secure; HttpOnly; Path=/; SameSite=Lax
+Connection: close
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure Software Baseline</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: var(--color-primary, #4f6ef7);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Document Management Platform</h1>
+    
+      <div class="userbox">Logged in as <strong>alice</strong>
+        
+        · <a href="/logout">Logout</a>
+      </div>
+    
+  </header>
+
+  <main>
+  <ul class="flashes" id="flash-container">
+    
+      
+    
+  </ul>
+
+  
+<section class="card narrow">
+  <h2>Erro 400</h2>
+  <p>Invalid request.</p>
+  <a href="/" class="back-link">&#8592; Voltar ao início</a>
+</section>
+
+</main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

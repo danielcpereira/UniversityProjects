@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card narrow">
+  <h2>Login</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Username</label>
+    <input type="text" name="username" required>
+
+    <label>Password</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Sign in</button>
+  </form>
+
+  <div style="margin-top: 1rem; text-align: center; font-size: 0.9rem; color: var(--color-muted, #666);">
+    Don't have an account yet?
+    <a href="{{ url_for('register') }}" style="color: var(--color-primary, #4f6ef7); text-decoration: none; font-weight: 600;">
+      Create account
+    </a>
+  </div>
+</section>
+{% endblock %}

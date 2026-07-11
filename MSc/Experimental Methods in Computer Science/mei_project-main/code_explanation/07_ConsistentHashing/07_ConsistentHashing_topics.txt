@@ -1,0 +1,8 @@
+================================================================
+07 — ConsistentHashing.java
+================================================================
+[1] `TreeMap` representa o anel de hashing ordenado por hash
+[2] `ceilingEntry` devolve o nó mais próximo no sentido horário do anel
+[3] Wrap-around: se `ceilingEntry` retorna null, usa `firstEntry` para fechar o anel
+[4] Virtual nodes distribuem cada servidor em múltiplos pontos do anel para distribuição uniforme
+[5] Ao remover um nó, apenas as keys que mapeavam para esse nó são redistribuídas

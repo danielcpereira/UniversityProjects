@@ -1,0 +1,8 @@
+================================================================
+08 — CopyOnWriteList.java
+================================================================
+[1] `volatile` garante visibilidade da referência `inner` entre threads — não do conteúdo da lista
+[2] A cada `add`, uma cópia completa da lista é criada — reads nunca bloqueiam
+[3] O lock protege apenas writes, garantindo que só um writer opera de cada vez
+[4] Readers acedem sempre a um snapshot imutável — sem risco de ConcurrentModificationException
+[5] Tradeoff: reads muito rápidos e sem contenção, mas writes são caros (cópia completa)

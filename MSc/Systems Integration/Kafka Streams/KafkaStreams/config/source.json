@@ -1,0 +1,14 @@
+{
+  "name": "jdbc-source-films",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "connection.url": "jdbc:postgresql://database:5432/project3",
+    "connection.user": "postgres",
+    "connection.password": "nopass",
+    "dialect.name": "PostgreSqlDatabaseDialect",
+    "mode": "bulk",
+    "query": "SELECT f.film_id, f.title, g.genre_name, f.base_price FROM films f JOIN genres g ON f.genre_id=g.genre_id",
+    "poll.interval.ms": "30000",
+    "topic.prefix": "Cinema"
+  }
+}

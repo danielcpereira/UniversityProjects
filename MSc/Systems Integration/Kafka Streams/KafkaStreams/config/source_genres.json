@@ -1,0 +1,14 @@
+{
+  "name": "jdbc-source-genres",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "connection.url": "jdbc:postgresql://database:5432/project3",
+    "connection.user": "postgres",
+    "connection.password": "nopass",
+    "dialect.name": "PostgreSqlDatabaseDialect",
+    "mode": "bulk",
+    "query": "SELECT genre_id, genre_name FROM genres",
+    "poll.interval.ms": "30000",
+    "topic.prefix": "Cinema"
+  }
+}

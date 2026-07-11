@@ -1,0 +1,261 @@
+name: 1 - Continuous Integration
+run-name: "${{ github.workflow }}"
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+permissions:
+  contents: read
+  packages: write
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAMESPACE: ${{ github.repository_owner }}
+  WEB_IMAGE_NAME: secure-doc-platform-web
+  DB_IMAGE_NAME: secure-doc-platform-db
+  BACKUP_IMAGE_NAME: secure-doc-platform-db-backup
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Start application stack for validation
+        run: |
+          docker compose up -d --build
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          API_KEY: ${{ secrets.API_KEY }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          FILE_ENCRYPTION_KEY: ${{ secrets.FILE_ENCRYPTION_KEY }}
+
+      - name: Wait for application
+        run: |
+          timeout=60
+          elapsed=0
+          until curl -fs http://localhost:8000/health > /dev/null; do
+            if [ "$elapsed" -ge "$timeout" ]; then
+              echo "Application did not become ready within ${timeout}s"
+              exit 1
+            fi
+            echo "Waiting for application..."
+            sleep 2
+            elapsed=$((elapsed+2))
+          done
+          echo "Application is ready"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest requests
+
+      - name: Run smoke tests
+        run: |
+          pytest -q tests/test_smoke.py
+
+      - name: Generate self-signed certificate for HTTPS test
+        run: |
+          mkdir -p nginx
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout nginx/self-signed.key \
+            -out nginx/self-signed.crt \
+            -subj "/CN=localhost"
+
+      - name: Create nginx config for HTTPS test
+        run: |
+          cat > nginx/nginx-test.conf << 'EOF'
+          server {
+              listen 80;
+              return 301 https://$host$request_uri;
+          }
+          server {
+              listen 443 ssl;
+              ssl_certificate     /etc/nginx/certs/self-signed.crt;
+              ssl_certificate_key /etc/nginx/certs/self-signed.key;
+              ssl_protocols TLSv1.2 TLSv1.3;
+              location / {
+                  proxy_pass http://web:8000;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+          EOF
+
+      - name: Start nginx and test HTTPS
+        run: |
+          docker run -d --name nginx-test \
+            --network ss_practical_project_default \
+            -p 80:80 -p 443:443 \
+            -v $(pwd)/nginx/nginx-test.conf:/etc/nginx/conf.d/default.conf:ro \
+            -v $(pwd)/nginx/self-signed.crt:/etc/nginx/certs/self-signed.crt:ro \
+            -v $(pwd)/nginx/self-signed.key:/etc/nginx/certs/self-signed.key:ro \
+            nginx:alpine
+
+          sleep 3
+
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost)
+          echo "HTTP status: $STATUS"
+          [ "$STATUS" = "301" ] || (echo "HTTP não está a redirecionar para HTTPS" && exit 1)
+
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" -k https://localhost/health)
+          echo "HTTPS status: $STATUS"
+          [ "$STATUS" = "200" ] || (echo "HTTPS não está a responder" && exit 1)
+
+          echo "HTTPS OK"
+
+      - name: Stop nginx test container
+        if: always()
+        run: docker rm -f nginx-test || true
+
+      - name: Stop stack
+        if: always()
+        run: |
+          docker compose down -v --remove-orphans
+
+  secrets:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sast-bandit:
+    name: SAST with Bandit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+
+      - name: Install Bandit
+        run: |
+          pip install bandit
+
+      - name: Run Bandit
+        run: |
+          bandit -r . -c .bandit
+
+  sca:
+    name: Software Composition Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install dependencies and pip-audit
+        run: |
+          pip install -r web/requirements.txt
+          pip install pip-audit
+
+      - name: Run pip-audit
+        run: |
+          pip-audit
+
+  build-and-push:
+    name: Build, test, scan, and publish Docker image
+    runs-on: ubuntu-latest
+    needs: [test, secrets, sast-bandit, sca]
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set lowercase image namespace
+        run: |
+          echo "IMAGE_NAMESPACE_LC=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image tags
+        run: |
+          echo "WEB_SHA_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE_LC }}/${{ env.WEB_IMAGE_NAME }}:${{ github.sha }}" >> "$GITHUB_ENV"
+          echo "DB_SHA_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE_LC }}/${{ env.DB_IMAGE_NAME }}:${{ github.sha }}" >> "$GITHUB_ENV"
+          echo "BACKUP_SHA_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE_LC }}/${{ env.BACKUP_IMAGE_NAME }}:${{ github.sha }}" >> "$GITHUB_ENV"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build web image locally
+        uses: docker/build-push-action@v7
+        with:
+          context: ./web
+          push: false
+          load: true
+          tags: ${{ env.WEB_SHA_TAG }}
+          provenance: false
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.WEB_SHA_TAG }}
+          format: table
+          exit-code: "0"
+          severity: HIGH,CRITICAL
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.WEB_SHA_TAG }}
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom-${{ github.sha }}
+          path: sbom.cdx.json
+
+      - name: Push web image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./web
+          push: true
+          tags: ${{ env.WEB_SHA_TAG }}
+          provenance: false
+
+      - name: Build and push db image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./db
+          push: true
+          tags: ${{ env.DB_SHA_TAG }}
+          provenance: false
+
+      - name: Build and push db-backup image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./db/backup
+          push: true
+          tags: ${{ env.BACKUP_SHA_TAG }}
+          provenance: false

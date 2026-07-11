@@ -1,0 +1,14 @@
+cinema\model\AggregateAvg.class
+cinema\Topics.class
+cinema\model\RentalEvent$Quality.class
+cinema\model\RentalEvent.class
+cinema\producer\RentalsProducer.class
+cinema\producer\LicensingProducer.class
+cinema\model\TopEntry.class
+cinema\model\RentalEvent$Type.class
+cinema\rest\RestServer.class
+cinema\model\LicensingEvent.class
+cinema\streams\CinemaStreamsApp.class
+cinema\serde\JsonSerde.class
+cinema\cli\AdminCLI.class
+cinema\model\RentalEvent$Duration.class

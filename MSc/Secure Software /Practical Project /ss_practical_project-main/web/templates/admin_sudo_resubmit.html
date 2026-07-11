@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card narrow">
+  <p>A redirecionar…</p>
+  <form id="sudo-resubmit" method="post" action="{{ next_url }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  </form>
+  <script>
+    document.getElementById("sudo-resubmit").submit();
+  </script>
+</section>
+{% endblock %}

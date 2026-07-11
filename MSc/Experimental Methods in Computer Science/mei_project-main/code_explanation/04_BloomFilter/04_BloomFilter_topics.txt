@@ -1,0 +1,8 @@
+================================================================
+04 — BloomFilter.java
+================================================================
+[1] Estrutura probabilística — pode ter falsos positivos, nunca falsos negativos
+[2] Múltiplos hashes com seeds diferentes reduzem a probabilidade de colisões
+[3] `mightContain` retorna true se todos os bits estão a 1 — não garante presença real
+[4] Não suporta remoção de elementos sem reconstruir a estrutura
+[5] Tradeoff: uso de espaço muito reduzido em troca de possibilidade de falsos positivos

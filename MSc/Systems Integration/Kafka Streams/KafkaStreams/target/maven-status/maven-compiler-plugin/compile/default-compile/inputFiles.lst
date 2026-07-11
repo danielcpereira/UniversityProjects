@@ -1,0 +1,11 @@
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\Topics.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\model\AggregateAvg.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\model\TopEntry.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\model\RentalEvent.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\streams\CinemaStreamsApp.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\serde\JsonSerde.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\producer\LicensingProducer.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\producer\RentalsProducer.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\cli\AdminCLI.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\model\LicensingEvent.java
+C:\Users\eduar\Desktop\IS_Assignment3\KafkaStreams\src\main\java\cinema\rest\RestServer.java
